@@ -12,6 +12,7 @@ module Collabda
       end
     end
 
+    private
     def json_to_hash(json)
       Hash[JSON.parse(json).map{|key,value| [key.to_sym, value]}]
     end
