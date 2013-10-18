@@ -7,6 +7,7 @@ module YamlData
   end
 
   def self.reload_all
+    return if @classes.nil?
     @classes.each do |c|
       c.reload
     end
@@ -22,7 +23,7 @@ module YamlData
   module ClassMethods
     def yaml_source(path)
       @yaml_path = path
-      @yaml_data = yaml_from_path(path)
+      set_yaml_data(path)
     end
 
     def all
@@ -34,8 +35,9 @@ module YamlData
     end
 
     def reload
-      raise InvalidSource if @yaml_data.nil?
+      raise InvalidSource if @yaml_path.nil?
       raise MissingAttributes if @yaml_attributes.nil?
+      set_yaml_data(@yaml_path)
       @yaml_models = @yaml_data.map do |el|
         build(el)
       end
@@ -62,6 +64,9 @@ module YamlData
     end
 
     private
+    def set_yaml_data(path)
+      @yaml_data = yaml_from_path(path)
+    end
     def yaml_from_path(path)
       YAML.load(File.open(path)).map{|model| model.symbolize_keys}
     end

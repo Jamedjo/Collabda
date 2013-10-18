@@ -11,7 +11,7 @@ yaml
 
 describe "YamlData model" do
   before(:each) do
-    File.stub(:open).and_return StringIO.open(FOO_YAML)
+    File.stub(:open){StringIO.open(FOO_YAML)}
   end
 
   let(:new_test_class) do
@@ -70,6 +70,11 @@ describe "YamlData model" do
 
     it "builds a new model for each element in the data" do
       model_class.should_receive(:new).exactly(3).times.and_return(double(:test))
+      model_class.reload
+    end
+
+    it "reloads the yaml file on reload" do
+      model_class.should_receive(:yaml_from_path).and_call_original
       model_class.reload
     end
 
