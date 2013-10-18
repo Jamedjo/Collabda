@@ -51,6 +51,14 @@ describe "YamlData model" do
       expect(model_class.instance_variable_get(:@yaml_attributes)).to eq [:name, :description]
     end
 
+    it "tracks where YamlData is included" do
+      FooList = model_class
+      expect(YamlData.instance_variable_get(:@classes).include?(FooList)).to be_true
+    end
+
+    it "maintains a list of yaml files to watch" do
+      expect(YamlData.watch_files).to include "spec/lib/foo.yaml"
+    end
 
     it "loads yaml data from file" do
       expect(model_class.yaml_data.count).to eq 3

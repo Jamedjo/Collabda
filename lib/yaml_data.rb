@@ -2,6 +2,18 @@ module YamlData
   def self.included(base)
     base.extend(Enumerable)
     base.extend(ClassMethods)
+    @classes ||= []
+    @classes << base
+  end
+
+  def self.reload_all
+    @classes.each do |c|
+      c.reload
+    end
+  end
+
+  def self.watch_files
+    @classes.map{|c| c.yaml_path}
   end
 
   InvalidSource = Class.new(StandardError)
@@ -24,9 +36,9 @@ module YamlData
     def reload
       raise InvalidSource if @yaml_data.nil?
       raise MissingAttributes if @yaml_attributes.nil?
-        @yaml_models = @yaml_data.map do |el|
-          build(el)
-        end
+      @yaml_models = @yaml_data.map do |el|
+        build(el)
+      end
     end
 
     def build(attributes_hash)
