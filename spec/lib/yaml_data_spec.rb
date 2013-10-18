@@ -65,6 +65,11 @@ describe "YamlData model" do
       model_class.reload
     end
 
+    it "can build a new instance from an attributes hash, bypassing yaml" do
+      instance = model_class.build(:name=>"Bat",:description=>"man")
+      expect(instance.description).to eq "man"
+    end
+
     describe "after data load" do
       before(:each){model_class.reload}
       it "it provides access to all models" do

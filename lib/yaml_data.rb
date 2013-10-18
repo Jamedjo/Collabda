@@ -24,13 +24,17 @@ module YamlData
     def reload
       raise InvalidSource if @yaml_data.nil?
       raise MissingAttributes if @yaml_attributes.nil?
-      @yaml_models = @yaml_data.map do |el|
-        model = self.new
-        @yaml_attributes.each do |attribute|
-          model.instance_variable_set("@#{attribute}",el[attribute])
+        @yaml_models = @yaml_data.map do |el|
+          build(el)
         end
-        model
+    end
+
+    def build(attributes_hash)
+      model = self.new
+      @yaml_attributes.each do |attribute|
+        model.instance_variable_set("@#{attribute}",attributes_hash[attribute])
       end
+      model
     end
 
     def yaml_attributes(*attributes)
