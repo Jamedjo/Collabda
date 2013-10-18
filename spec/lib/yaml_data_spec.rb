@@ -74,7 +74,7 @@ describe "YamlData model" do
     end
 
     it "reloads the yaml file on reload" do
-      model_class.should_receive(:yaml_from_path).and_call_original
+      model_class.should_receive(:load_yaml_data).and_call_original
       model_class.reload
     end
 
