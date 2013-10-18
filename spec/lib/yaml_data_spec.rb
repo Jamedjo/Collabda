@@ -30,6 +30,17 @@ describe "YamlData model" do
     model_class = new_test_class.call
   end
 
+  describe "errors" do
+    let(:model_class){Class.new{include YamlData}}
+    it "raises InvalidSource error if source not set" do
+      expect{model_class.reload}.to raise_error YamlData::InvalidSource
+    end
+    it "raises MissingAttributes error if not set" do
+      model_class.yaml_source "foo.yaml"
+      expect{model_class.reload}.to raise_error YamlData::MissingAttributes
+    end
+  end
+
   describe "after class definition" do
     let!(:model_class){new_test_class.call}
     specify "yaml_source sets a yaml_path class variable" do
@@ -39,6 +50,7 @@ describe "YamlData model" do
     specify "yaml_attributes sets fields to use" do
       expect(model_class.instance_variable_get(:@yaml_attributes)).to eq [:name, :description]
     end
+
 
     it "loads yaml data from file" do
       expect(model_class.yaml_data.count).to eq 3

@@ -4,6 +4,9 @@ module YamlData
     base.extend(ClassMethods)
   end
 
+  InvalidSource = Class.new(StandardError)
+  MissingAttributes = Class.new(StandardError)
+
   module ClassMethods
     def yaml_source(path)
       @yaml_path = path
@@ -19,6 +22,8 @@ module YamlData
     end
 
     def reload
+      raise InvalidSource if @yaml_data.nil?
+      raise MissingAttributes if @yaml_attributes.nil?
       @yaml_models = @yaml_data.map do |el|
         model = self.new
         @yaml_attributes.each do |attribute|
