@@ -1,5 +1,6 @@
 module YamlData
   def self.included(base)
+    base.extend(Enumerable)
     base.extend(ClassMethods)
   end
 
@@ -11,6 +12,10 @@ module YamlData
 
     def all
       @yaml_models
+    end
+
+    def each(&block)
+      @yaml_models.each(&block)
     end
 
     def reload

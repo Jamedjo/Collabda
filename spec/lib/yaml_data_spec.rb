@@ -65,6 +65,10 @@ describe "YamlData model" do
       it "sets instance variables for each yaml attribute" do
         expect(model_class.all.first.instance_variable_get(:@name)).to eq "Foo"
       end
+
+      it "implements enumerable correctly" do
+        expect(model_class.map{|m| m.instance_variable_get(:@name)}).to eq ["Foo","Bar","Baz"]
+      end
     end
   end
 end
