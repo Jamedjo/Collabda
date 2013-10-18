@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-
-
 FOO_YAML = <<-yaml
 - name: Foo
   description: "yo foo"
@@ -10,7 +8,6 @@ FOO_YAML = <<-yaml
 - name: Baz
   description: "get some baz"
 yaml
-
 
 describe "YamlData model" do
   before(:each) do
@@ -22,6 +19,7 @@ describe "YamlData model" do
       Class.new do
         include YamlData
         yaml_source "spec/lib/foo.yaml"
+        attr_reader :description
         yaml_attributes :name, :description
       end
     end
@@ -68,6 +66,10 @@ describe "YamlData model" do
 
       it "implements enumerable correctly" do
         expect(model_class.map{|m| m.instance_variable_get(:@name)}).to eq ["Foo","Bar","Baz"]
+      end
+
+      it "works alongside attr_reader" do
+        expect(model_class.first.description).to eq "yo foo"
       end
     end
   end

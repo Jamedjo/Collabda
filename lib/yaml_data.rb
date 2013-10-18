@@ -45,5 +45,4 @@ module YamlData
       YAML.load(File.open(path)).map{|model| model.symbolize_keys}
     end
   end
-
 end
