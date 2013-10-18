@@ -22,6 +22,7 @@ describe "YamlData model" do
       Class.new do
         include YamlData
         yaml_source "spec/lib/foo.yaml"
+        yaml_attributes :name, :description
       end
     end
   end
@@ -29,6 +30,11 @@ describe "YamlData model" do
   specify "yaml_source sets a yaml_path class variable" do
     TestModel = new_test_class.call
     expect(TestModel.yaml_path).to be_a String
+  end
+
+  specify "yaml_attributes sets fields to use" do
+    model_class = new_test_class.call
+    expect(model_class.instance_variable_get(:@yaml_attributes)).to eq [:name, :description]
   end
 
   it "opens specified file on initialize" do
@@ -41,9 +47,14 @@ describe "YamlData model" do
     expect(TestModel3.yaml_data.count).to eq 3
   end
 
+  it "uses symbols as attribute keys for consistency" do
+    model_class = new_test_class.call
+    expect(model_class.yaml_data.first.keys.first).to be_a Symbol
+  end
+
   it "builds a new model for each element in the data" do
     TestModel4 = new_test_class.call
-    TestModel4.should_receive(:new).exactly(3).times
+    TestModel4.should_receive(:new).exactly(3).times.and_return(double(:test))
     TestModel4.reload
   end
 
@@ -52,6 +63,12 @@ describe "YamlData model" do
     TestModel5.reload
     expect(TestModel5.all.count).to eq 3
     expect(TestModel5.all.first.class).to eq TestModel5
+  end
+
+  it "sets instance variables for each yaml attribute" do
+    model_class = new_test_class.call
+    model_class.reload
+    expect(model_class.all.first.instance_variable_get(:@name)).to eq "Foo"
   end
 
 end

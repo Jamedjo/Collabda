@@ -14,7 +14,17 @@ module YamlData
     end
 
     def reload
-      @yaml_models = @yaml_data.map{|el| self.new() }
+      @yaml_models = @yaml_data.map do |el|
+        model = self.new
+        @yaml_attributes.each do |attribute|
+          model.instance_variable_set("@#{attribute}",el[attribute])
+        end
+        model
+      end
+    end
+
+    def yaml_attributes(*attributes)
+      @yaml_attributes=attributes
     end
 
     def yaml_path
@@ -27,7 +37,7 @@ module YamlData
 
     private
     def yaml_from_path(path)
-      YAML.load(File.open(path))
+      YAML.load(File.open(path)).map{|model| model.symbolize_keys}
     end
   end
 
