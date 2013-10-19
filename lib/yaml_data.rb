@@ -31,7 +31,7 @@ module YamlData
     end
 
     def each(&block)
-      @yaml_models.each(&block)
+      all.each(&block)
     end
 
     def reload
