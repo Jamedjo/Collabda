@@ -13,17 +13,18 @@ module YamlData
     end
   end
 
-  def self.watch_files
-    @classes.map{|c| c.yaml_path}
-  end
+  # def self.watch_files
+  #   @classes.map{|c| c.yaml_path}
+  # end
 
   InvalidSource = Class.new(StandardError)
   MissingAttributes = Class.new(StandardError)
 
   module ClassMethods
-    def yaml_source(path)
+    def source(path, options={})
       @yaml_path = path
-      load_yaml_data
+      @format = options[:type] || :yaml
+      fetch_data
     end
 
     def all
@@ -36,8 +37,8 @@ module YamlData
 
     def reload
       raise InvalidSource if @yaml_path.nil?
-      raise MissingAttributes if @yaml_attributes.nil?
-      load_yaml_data
+      raise MissingAttributes if @properties.nil?
+      fetch_data
       @yaml_models = @yaml_data.map do |el|
         build(el)
       end
@@ -45,14 +46,14 @@ module YamlData
 
     def build(attributes_hash)
       model = self.new
-      @yaml_attributes.each do |attribute|
+      @properties.each do |attribute|
         model.instance_variable_set("@#{attribute}",attributes_hash[attribute])
       end
       model
     end
 
-    def yaml_attributes(*attributes)
-      @yaml_attributes=attributes
+    def properties(*attributes)
+      @properties=attributes
     end
 
     def yaml_path
@@ -64,8 +65,15 @@ module YamlData
     end
 
     private
-    def load_yaml_data
-      @yaml_data = YAML.load(File.open(@yaml_path)).map{|model| model.symbolize_keys}
+    def fetch_data
+      io = File.open(@yaml_path)
+      @yaml_data = Readers.send(@format,io)
+    end
+  end
+
+  module Readers
+    def self.yaml(io)
+      YAML.load(io).map{|model| model.symbolize_keys}
     end
   end
 end

@@ -9,7 +9,7 @@ FOO_YAML = <<-yaml
   description: "get some baz"
 yaml
 
-describe "YamlData model" do
+describe "YamlData" do
   before(:each) do
     File.stub(:open){StringIO.open(FOO_YAML)}
   end
@@ -18,9 +18,9 @@ describe "YamlData model" do
     -> do
       Class.new do
         include YamlData
-        yaml_source "spec/lib/foo.yaml"
+        source "spec/lib/foo.yaml"
         attr_reader :description
-        yaml_attributes :name, :description
+        properties :name, :description
       end
     end
   end
@@ -36,19 +36,19 @@ describe "YamlData model" do
       expect{model_class.reload}.to raise_error YamlData::InvalidSource
     end
     it "raises MissingAttributes error if not set" do
-      model_class.yaml_source "foo.yaml"
+      model_class.source "foo.yaml"
       expect{model_class.reload}.to raise_error YamlData::MissingAttributes
     end
   end
 
-  describe "after class definition" do
+  describe "model" do
     let!(:model_class){new_test_class.call}
-    specify "yaml_source sets a yaml_path class variable" do
+    specify "source sets a yaml_path class variable" do
       expect(model_class.yaml_path).to be_a String
     end
 
-    specify "yaml_attributes sets fields to use" do
-      expect(model_class.instance_variable_get(:@yaml_attributes)).to eq [:name, :description]
+    specify "properties sets fields to use" do
+      expect(model_class.instance_variable_get(:@properties)).to eq [:name, :description]
     end
 
     it "tracks where YamlData is included" do
@@ -56,9 +56,9 @@ describe "YamlData model" do
       expect(YamlData.instance_variable_get(:@classes).include?(FooList)).to be_true
     end
 
-    it "maintains a list of yaml files to watch" do
-      expect(YamlData.watch_files).to include "spec/lib/foo.yaml"
-    end
+    # it "maintains a list of yaml files to watch" do
+    #   expect(YamlData.watch_files).to include "spec/lib/foo.yaml"
+    # end
 
     it "loads yaml data from file" do
       expect(model_class.yaml_data.count).to eq 3
@@ -74,7 +74,7 @@ describe "YamlData model" do
     end
 
     it "reloads the yaml file on reload" do
-      model_class.should_receive(:load_yaml_data).and_call_original
+      model_class.should_receive(:fetch_data).and_call_original
       model_class.reload
     end
 
@@ -83,7 +83,7 @@ describe "YamlData model" do
       expect(instance.description).to eq "man"
     end
 
-    describe "after data load" do
+    context "when reloaded" do
       before(:each){model_class.reload}
       it "it provides access to all models" do
         expect(model_class.all.count).to eq 3
