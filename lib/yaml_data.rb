@@ -14,7 +14,7 @@ module YamlData
   end
 
   # def self.watch_files
-  #   @classes.map{|c| c.yaml_path}
+  #   @classes.map{|c| c.source_path}
   # end
 
   InvalidSource = Class.new(StandardError)
@@ -22,7 +22,7 @@ module YamlData
 
   module ClassMethods
     def source(path, options={})
-      @yaml_path = path
+      @source_path = path
       @format = options[:type] || :yaml
       fetch_data
     end
@@ -36,14 +36,14 @@ module YamlData
     end
 
     def check_validity
-      raise InvalidSource if @yaml_path.nil?
+      raise InvalidSource if @source_path.nil?
       raise MissingAttributes if @properties.nil?
     end
 
     def build_collection
       check_validity
       fetch_data
-      @yaml_models = @yaml_data.map do |el|
+      @yaml_models = @parsed_data.map do |el|
         build(el)
       end
     end
@@ -60,24 +60,27 @@ module YamlData
       @properties=attributes
     end
 
-    def yaml_path
-      @yaml_path
+    def source_path
+      @source_path
     end
 
-    def yaml_data
-      @yaml_data
+    def parsed_data
+      @parsed_data
     end
 
     private
     def fetch_data
-      io = File.open(@yaml_path)
-      @yaml_data = Readers.send(@format,io)
+      io = File.open(@source_path)
+      @parsed_data = Readers.send(@format,io)
     end
   end
 
   module Readers
     def self.yaml(io)
       YAML.load(io).map{|model| model.symbolize_keys}
+    end
+    def self.json(io)
+      JSON.load(io).map{|model| model.symbolize_keys}
     end
   end
 end

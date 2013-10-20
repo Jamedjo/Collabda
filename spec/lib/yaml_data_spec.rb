@@ -9,25 +9,41 @@ FOO_YAML = <<-yaml
   description: "get some baz"
 yaml
 
+FOO_JSON = <<-json
+[
+  {"name": "FooJ", "description": "yo foo"},
+  {"name": "BarJ", "description": "at the bar"},
+  {"name": "BazJ", "description": "get some baz"}
+]
+json
+
 describe "YamlData" do
   before(:each) do
     File.stub(:open){StringIO.open(FOO_YAML)}
   end
 
-  let(:new_test_class) do
-    -> do
-      Class.new do
-        include YamlData
-        source "spec/lib/foo.yaml"
-        attr_reader :description
-        properties :name, :description
+  let(:class_builder) do
+    ->(&block) do
+      -> do
+        Class.new do
+          include YamlData
+          # include Collabda::Document
+          block.call(self)
+          attr_reader :description
+          properties :name, :description
+        end
       end
     end
   end
 
+  let(:yaml_class_factory) do
+    class_builder.call{|c| c.source "spec/lib/foo.yaml", :type=>:yaml}
+  end
+
+
   it "opens specified file during class definition" do
     File.should_receive(:open)
-    model_class = new_test_class.call
+    model_class = yaml_class_factory.call
   end
 
   describe "errors" do
@@ -41,10 +57,10 @@ describe "YamlData" do
     end
   end
 
-  describe "model" do
-    let!(:model_class){new_test_class.call}
-    specify "source sets a yaml_path class variable" do
-      expect(model_class.yaml_path).to be_a String
+  describe "Yaml model" do
+    let!(:model_class){yaml_class_factory.call}
+    specify "source sets a source_path class variable" do
+      expect(model_class.source_path).to be_a String
     end
 
     specify "properties sets fields to use" do
@@ -53,7 +69,7 @@ describe "YamlData" do
 
     it "tracks where YamlData is included" do
       FooList = model_class
-      expect(YamlData.instance_variable_get(:@classes).include?(FooList)).to be_true
+      expect(YamlData.instance_variable_get(:@classes)).to include FooList
     end
 
     # it "maintains a list of yaml files to watch" do
@@ -61,11 +77,11 @@ describe "YamlData" do
     # end
 
     it "loads yaml data from file" do
-      expect(model_class.yaml_data.count).to eq 3
+      expect(model_class.parsed_data.count).to eq 3
     end
 
     it "uses symbols as attribute keys for consistency" do
-      expect(model_class.yaml_data.first.keys.first).to be_a Symbol
+      expect(model_class.parsed_data.first.keys.first).to be_a Symbol
     end
 
     it "builds a new model for each element in the data" do
@@ -103,4 +119,18 @@ describe "YamlData" do
       end
     end
   end
+
+  describe "Json model" do
+    before(:each) do
+      File.stub(:open){StringIO.open(FOO_JSON)}
+    end
+    let(:json_class_factory) do
+      class_builder.call{|c| c.source "http://foo.bar/baz.json", :type=>:json}
+    end
+    it "parses json into ruby data" do
+      model_class = json_class_factory.call
+      expect(model_class.parsed_data.first[:name]).to eq "FooJ"
+    end
+  end
+
 end
