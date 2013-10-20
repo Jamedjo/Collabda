@@ -17,7 +17,7 @@ FOO_JSON = <<-json
 ]
 json
 
-describe "YamlData" do
+describe "Collabda" do
   before(:each) do
     File.stub(:open){StringIO.open(FOO_YAML)}
   end
@@ -26,7 +26,7 @@ describe "YamlData" do
     ->(&block) do
       -> do
         Class.new do
-          include YamlData
+          include Collabda
           # include Collabda::Document
           block.call(self)
           attr_reader :description
@@ -47,13 +47,13 @@ describe "YamlData" do
   end
 
   describe "errors" do
-    let(:model_class){Class.new{include YamlData}}
+    let(:model_class){Class.new{include Collabda}}
     it "raises InvalidSource error if source not set" do
-      expect{model_class.build_collection}.to raise_error YamlData::InvalidSource
+      expect{model_class.build_collection}.to raise_error Collabda::InvalidSource
     end
     it "raises MissingAttributes error if not set" do
       model_class.source "foo.yaml"
-      expect{model_class.build_collection}.to raise_error YamlData::MissingAttributes
+      expect{model_class.build_collection}.to raise_error Collabda::MissingAttributes
     end
   end
 
@@ -67,13 +67,13 @@ describe "YamlData" do
       expect(model_class.instance_variable_get(:@properties)).to eq [:name, :description]
     end
 
-    it "tracks where YamlData is included" do
+    it "tracks where Collabda is included" do
       FooList = model_class
-      expect(YamlData.instance_variable_get(:@classes)).to include FooList
+      expect(Collabda.instance_variable_get(:@classes)).to include FooList
     end
 
     # it "maintains a list of yaml files to watch" do
-    #   expect(YamlData.watch_files).to include "spec/lib/foo.yaml"
+    #   expect(Collabda.watch_files).to include "spec/lib/foo.yaml"
     # end
 
     it "loads yaml data from file" do
@@ -135,7 +135,7 @@ describe "YamlData" do
 
   describe "collection" do
     let(:built_collection) do
-      YamlData.collection(:Food) do
+      Collabda.collection(:Food) do
         source ""
         properties :none
         def foo
@@ -150,7 +150,7 @@ describe "YamlData" do
     it "creates a class in parent context" do
       built_collection = module TestModels
         class C
-          YamlData.collection(:Food){source "";properties :none}
+          Collabda.collection(:Food){source "";properties :none}
         end
       end
       expect(built_collection.to_s).to eq "TestModels::C::Food"
@@ -160,7 +160,7 @@ describe "YamlData" do
       expect(built_collection.to_s).to eq "Food"
     end
 
-    it "includes YamlData in the new class" do
+    it "includes Collabda in the new class" do
       expect(built_collection).to respond_to :source
     end
 
@@ -173,7 +173,7 @@ describe "YamlData" do
     end
 
     it "auto-builds the collection from its source" do
-      expect{YamlData.collection(:Food){}}.to raise_error YamlData::InvalidSource
+      expect{Collabda.collection(:Food){}}.to raise_error Collabda::InvalidSource
     end
   end
 end

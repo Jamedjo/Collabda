@@ -1,4 +1,4 @@
-module YamlData
+module Collabda
   def self.included(base)
     base.extend(Enumerable)
     base.extend(ClassMethods)
@@ -6,7 +6,7 @@ module YamlData
     @classes << base
   end
 
-  def self.reload_all
+  def self.rebuild_collections
     return if @classes.nil?
     @classes.each do |c|
       c.build_collection
@@ -15,7 +15,7 @@ module YamlData
 
   def self.collection(class_name, &block)
     model = Class.new do
-      include YamlData
+      include Collabda
       self.class_eval(&block)
     end
     nesting = block.binding.eval("Module.nesting[0]") || Object
@@ -39,7 +39,7 @@ module YamlData
     end
 
     def all
-      @yaml_models
+      @collabda_models
     end
 
     def each(&block)
@@ -54,7 +54,7 @@ module YamlData
     def build_collection
       check_validity
       fetch_data
-      @yaml_models = @parsed_data.map do |el|
+      @collabda_models = @parsed_data.map do |el|
         build(el)
       end
     end
