@@ -33,11 +33,11 @@ describe "YamlData" do
   describe "errors" do
     let(:model_class){Class.new{include YamlData}}
     it "raises InvalidSource error if source not set" do
-      expect{model_class.reload}.to raise_error YamlData::InvalidSource
+      expect{model_class.build_collection}.to raise_error YamlData::InvalidSource
     end
     it "raises MissingAttributes error if not set" do
       model_class.source "foo.yaml"
-      expect{model_class.reload}.to raise_error YamlData::MissingAttributes
+      expect{model_class.build_collection}.to raise_error YamlData::MissingAttributes
     end
   end
 
@@ -70,12 +70,12 @@ describe "YamlData" do
 
     it "builds a new model for each element in the data" do
       model_class.should_receive(:new).exactly(3).times.and_return(double(:test))
-      model_class.reload
+      model_class.build_collection
     end
 
-    it "reloads the yaml file on reload" do
+    it "reloads the yaml file on build_collection" do
       model_class.should_receive(:fetch_data).and_call_original
-      model_class.reload
+      model_class.build_collection
     end
 
     it "can build a new instance from an attributes hash, bypassing yaml" do
@@ -83,8 +83,8 @@ describe "YamlData" do
       expect(instance.description).to eq "man"
     end
 
-    context "when reloaded" do
-      before(:each){model_class.reload}
+    context "when collection built" do
+      before(:each){model_class.build_collection}
       it "it provides access to all models" do
         expect(model_class.all.count).to eq 3
         expect(model_class.all.first.class).to eq model_class

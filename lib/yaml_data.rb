@@ -9,7 +9,7 @@ module YamlData
   def self.reload_all
     return if @classes.nil?
     @classes.each do |c|
-      c.reload
+      c.build_collection
     end
   end
 
@@ -35,9 +35,13 @@ module YamlData
       all.each(&block)
     end
 
-    def reload
+    def check_validity
       raise InvalidSource if @yaml_path.nil?
       raise MissingAttributes if @properties.nil?
+    end
+
+    def build_collection
+      check_validity
       fetch_data
       @yaml_models = @yaml_data.map do |el|
         build(el)
