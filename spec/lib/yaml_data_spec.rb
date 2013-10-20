@@ -133,4 +133,47 @@ describe "YamlData" do
     end
   end
 
+  describe "collection" do
+    let(:built_collection) do
+      YamlData.collection(:Food) do
+        source ""
+        properties :none
+        def foo
+        end
+        def self.bar
+        end
+      end
+    end
+
+    after(:each){Object.send(:remove_const,:Food) rescue nil}
+
+    it "creates a class in parent context" do
+      built_collection = module TestModels
+        class C
+          YamlData.collection(:Food){source "";properties :none}
+        end
+      end
+      expect(built_collection.to_s).to eq "TestModels::C::Food"
+    end
+
+    it "creates a class root context if not in module" do
+      expect(built_collection.to_s).to eq "Food"
+    end
+
+    it "includes YamlData in the new class" do
+      expect(built_collection).to respond_to :source
+    end
+
+    it "executes its block while building the class" do
+      expect(built_collection).to respond_to :bar
+    end
+
+    it "executes is block in the correct context" do
+      expect(built_collection.new).to respond_to :foo
+    end
+
+    it "auto-builds the collection from its source" do
+      expect{YamlData.collection(:Food){}}.to raise_error YamlData::InvalidSource
+    end
+  end
 end

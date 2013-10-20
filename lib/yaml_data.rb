@@ -13,6 +13,17 @@ module YamlData
     end
   end
 
+  def self.collection(class_name, &block)
+    model = Class.new do
+      include YamlData
+      self.class_eval(&block)
+    end
+    nesting = block.binding.eval("Module.nesting[0]") || Object
+    nesting.instance_eval{const_set(class_name, model)}
+    model.build_collection
+    return model
+  end
+
   # def self.watch_files
   #   @classes.map{|c| c.source_path}
   # end
