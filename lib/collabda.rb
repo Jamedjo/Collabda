@@ -95,3 +95,19 @@ module Collabda
     end
   end
 end
+
+if defined? Rails
+  # TODO: add development autoreload code
+else
+  class Hash
+    def symbolize_keys
+      dup.symbolize_keys!
+    end
+    def symbolize_keys!
+      keys.each do |key|
+        self[(key.to_sym rescue key) || key] = delete(key)
+      end
+      self
+    end
+  end
+end
