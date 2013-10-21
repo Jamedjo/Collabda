@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'collabda'
 
 FOO_YAML = <<-yaml
 - name: Foo
