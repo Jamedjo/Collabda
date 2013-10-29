@@ -72,10 +72,6 @@ describe "Collabda" do
       expect(Collabda.instance_variable_get(:@classes)).to include FooList
     end
 
-    # it "maintains a list of yaml files to watch" do
-    #   expect(Collabda.watch_files).to include "spec/lib/foo.yaml"
-    # end
-
     it "loads yaml data from file" do
       expect(model_class.parsed_data.count).to eq 3
     end
