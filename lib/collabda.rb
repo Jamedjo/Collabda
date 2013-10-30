@@ -30,6 +30,7 @@ module Collabda
     self.class.instance_variable_get("@properties").each do |attribute|
       instance_variable_set("@#{attribute}",attributes_hash[attribute])
     end
+    self.class.register_model(self)
   end
 
   InvalidSource = Class.new(StandardError)
@@ -43,7 +44,12 @@ module Collabda
     end
 
     def all
-      @collabda_models
+      @collabda_models || []
+    end
+
+    def register_model(model)
+      @collabda_models ||= []
+      @collabda_models << model
     end
 
     def each(&block)
@@ -58,7 +64,7 @@ module Collabda
     def build_collection
       check_validity
       fetch_data
-      @collabda_models = @parsed_data.map do |el|
+      @parsed_data.each do |el|
         self.new(el)
       end
     end

@@ -96,6 +96,10 @@ describe "Collabda" do
       expect(instance.description).to eq "man"
     end
 
+    it "adds to collection when creating an external instance with new" do
+      expect{model_class.new(:name=>"Bat",:description=>"man")}.to change{model_class.all.count}.by 1
+    end
+
     context "when collection built" do
       before(:each){model_class.build_collection}
       it "it provides access to all models" do
