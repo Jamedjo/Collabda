@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/collabda.png)](http://badge.fury.io/rb/collabda) [![Build Status](https://travis-ci.org/Jamedjo/Collabda.png?branch=master)](https://travis-ci.org/Jamedjo/Collabda)
+
 #Collabda
 
 Lets you build your models from [JSON](http://en.wikipedia.org/wiki/JSON#Examples) or [YAML](http://yaml.org/) files.
@@ -12,6 +14,10 @@ Lets you build your models from [JSON](http://en.wikipedia.org/wiki/JSON#Example
     Food.build_collection
 
 It builds an array from your data so you can do `Food.all` to get all your food objects, or `Food.map{|f| f.name}` to get all the names.
+
+## Installation
+
+You can just add `gem collabda` to your Gemfile or `gem install collabda`.
 
 ## Source
 Specifies which file to use for this class. The file should include an array of items, each of which will become an instance of your class. 
