@@ -1,4 +1,5 @@
 require 'json'
+require 'yaml'
 
 module Collabda
   def self.included(base)
