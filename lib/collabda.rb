@@ -26,6 +26,11 @@ module Collabda
     return model
   end
 
+  def initialize(attributes_hash={})
+    self.class.instance_variable_get("@properties").each do |attribute|
+      instance_variable_set("@#{attribute}",attributes_hash[attribute])
+    end
+  end
 
   InvalidSource = Class.new(StandardError)
   MissingAttributes = Class.new(StandardError)
@@ -54,16 +59,8 @@ module Collabda
       check_validity
       fetch_data
       @collabda_models = @parsed_data.map do |el|
-        build(el)
+        self.new(el)
       end
-    end
-
-    def build(attributes_hash)
-      model = self.new
-      @properties.each do |attribute|
-        model.instance_variable_set("@#{attribute}",attributes_hash[attribute])
-      end
-      model
     end
 
     def properties(*attributes)

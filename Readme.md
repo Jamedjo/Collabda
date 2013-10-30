@@ -70,7 +70,7 @@ As well as building an individual collection with `YourModel.build_collection`, 
 If you're using Rails, you can use the template in [config/initializers/collabda.rb](https://github.com/Jamedjo/Collabda/blob/master/config/initializers/collabda.rb) to auto-reload data in Rails' development mode.
 
 ### Manual build
-You can also use `YourClass.build(attributes_hash)` if you need to create an instance which doesn't use the data file. This doesn't add the instance to `self.all` though. Collabda is still in alpha though, and this interface might change.
+You can also use `YourClass.new(attributes_hash)` if you need to create an instance which doesn't use the data file. This doesn't add the instance to `self.all` though. Collabda is still in alpha though, and this interface might change.
 
 ## All, Each & Enumerable
 Collabda models implement [Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable.html) giving you all that sugary functional magic.
