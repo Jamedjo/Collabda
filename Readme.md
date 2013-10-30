@@ -80,7 +80,7 @@ Collabda models implement [Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable
       properties :name, :admin, :likes
     end
 
-    Favourites include `People.all`, `People.each`, `People.map`, `People.select` and `People.any?`
+Favourites include `People.all`, `People.each`, `People.map`, `People.select` and `People.any?`
 
 ### Sorting & Filtering
 You can use plain ruby methods from Enumerable to sort and filter your data. For example, the following will sort by likes descending:

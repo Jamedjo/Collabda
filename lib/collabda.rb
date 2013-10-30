@@ -1,3 +1,5 @@
+require 'json'
+
 module Collabda
   def self.included(base)
     base.extend(Enumerable)
@@ -24,9 +26,6 @@ module Collabda
     return model
   end
 
-  # def self.watch_files
-  #   @classes.map{|c| c.source_path}
-  # end
 
   InvalidSource = Class.new(StandardError)
   MissingAttributes = Class.new(StandardError)

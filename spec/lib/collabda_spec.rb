@@ -91,6 +91,7 @@ describe "Collabda" do
     end
 
     it "can build a new instance from an attributes hash, bypassing yaml" do
+      YAML.should_not_receive(:load)
       instance = model_class.build(:name=>"Bat",:description=>"man")
       expect(instance.description).to eq "man"
     end
