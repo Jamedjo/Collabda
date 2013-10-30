@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    collabda (0.0.1a)
+    collabda (0.0.1)
 
 GEM
   remote: https://rubygems.org/

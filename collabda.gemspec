@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'collabda'
-  s.version     = '0.0.1a'
-  s.date        = '2013-07-19'
+  s.version     = '0.0.1'
+  s.date        = '2013-10-29'
   s.files       = ['lib/collabda.rb']
   s.test_files  = ['spec/lib/collabda_spec.rb']
   s.authors     = ['James Edwards-Jones']
