@@ -65,6 +65,7 @@ module Collabda
     def build_collection
       check_validity
       fetch_data
+      @collabda_models = []
       @parsed_data.each do |el|
         self.new(el)
       end

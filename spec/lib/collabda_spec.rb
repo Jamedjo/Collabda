@@ -119,6 +119,20 @@ describe "Collabda" do
         expect(model_class.first.description).to eq "yo foo"
       end
     end
+
+    context "rebuilding a collection" do
+      before(:each) do
+        Collabda.instance_variable_set(:"@classes",[model_class])
+        model_class.build_collection
+      end
+      it "calls build collection for each class" do
+        expect(model_class).to receive(:build_collection).once
+        Collabda.rebuild_collections
+      end
+      it "doesn't re-add existing collections" do
+        expect{Collabda.rebuild_collections}.not_to change{model_class.count}
+      end
+    end
   end
 
   describe "Json model" do
